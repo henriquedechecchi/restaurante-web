@@ -34,7 +34,7 @@ Spring Boot 3.3.0 - Framework principal
 Spring Web - API REST e controllers
 Spring Data JPA - Persistência de dados
 H2 Database - Banco de dados em memória
-Spring Boot DevTools - Desenvolvimento
+Spring Boot DevTools - Desenvolvimento - JAVA
 
 Frontend
 
@@ -47,3 +47,4 @@ CSS Grid & Flexbox - Layout responsivo
 GitHub: @henriquedechecchi
 LinkedIn: henrique-de-checchi-
 Email: henriquedechecchis@hotmail.com
+
