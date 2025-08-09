@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bebidas - Sakura Garden</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header-left h1 {
+            font-family: 'Crimson Text', serif;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-left .subtitle {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .form-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .table-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .table-header h2 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-box {
+            padding: 0.8rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            width: 300px;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        th {
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 1.2rem;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: scale(1.01);
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .price {
+            font-weight: 600;
+            color: #27ae60;
+            font-size: 1.1rem;
+        }
+
+        .drink-name {
+            font-weight: 500;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .drink-category {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Sugestões de bebidas */
+        .suggestions {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .suggestions h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .suggestion-chip {
+            background: white;
+            color: #667eea;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .suggestion-chip:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Responsivo */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .search-box {
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            th, td {
+                padding: 0.8rem 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Animações */
+        .form-card, .table-card, .stat-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header-left">
+            <h1>🍵 Bebidas Orientais</h1>
+            <div class="subtitle">Chás tradicionais, sakês e bebidas especiais</div>
+        </div>
+        <a th:href="@{/}" class="back-btn">
+            ← Voltar ao Menu
+        </a>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="number" th:text="${#lists.size(bebidas)}">0</div>
+            <div class="label">Bebidas no Cardápio</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">🍶</div>
+            <div class="label">Sakês Premium</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">🫖</div>
+            <div class="label">Chás Tradicionais</div>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div class="form-card">
+            <h2>✨ Nova Bebida</h2>
+            <form th:action="@{/bebidas}" method="post">
+                <div class="form-group">
+                    <label for="nome">Nome da Bebida</label>
+                    <input type="text" id="nome" name="nome" required
+                           placeholder="Ex: Chá Verde Premium">
+                </div>
+                <div class="form-group">
+                    <label for="preco">Preço (R$)</label>
+                    <input type="number" id="preco" name="preco" step="0.01" required
+                           placeholder="0.00" min="0">
+                </div>
+                <button type="submit" class="btn-primary">
+                    Adicionar ao Cardápio
+                </button>
+            </form>
+
+            <div class="suggestions">
+                <h4>💡 Sugestões de Bebidas Orientais:</h4>
+                <div class="suggestion-chips">
+                    <span class="suggestion-chip" onclick="fillSuggestion('Chá Verde Matcha', 12.90)">Chá Verde Matcha</span>
+                    <span class="suggestion-chip" onclick="fillSuggestion('Sakê Junmai', 28.50)">Sakê Junmai</span>
+                    <span class="suggestion-chip" onclick="fillSuggestion('Chá Oolong', 15.90)">Chá Oolong</span>
+                    <span class="suggestion-chip" onclick="fillSuggestion('Ramune', 8.90)">Ramune</span>
+                    <span class="suggestion-chip" onclick="fillSuggestion('Chá Jasmin', 13.50)">Chá Jasmin</span>
+                    <span class="suggestion-chip" onclick="fillSuggestion('Soju', 24.90)">Soju</span>
+                    <span class="suggestion-chip" onclick="fillSuggestion('Bubble Tea', 16.90)">Bubble Tea</span>
+                    <span class="suggestion-chip" onclick="fillSuggestion('Chá de Crisântemo', 11.90)">Chá de Crisântemo</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="table-header">
+                <h2>🍹 Carta de Bebidas</h2>
+                <input type="text" class="search-box" placeholder="Buscar bebida..."
+                       onkeyup="filterTable()">
+            </div>
+
+            <div class="table-container">
+                <table id="bebidasTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Bebida</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(bebidas)}">
+                        <td colspan="4" class="empty-state">
+                            <div class="icon">🍵</div>
+                            <div>Nenhuma bebida cadastrada ainda</div>
+                            <small>Adicione sua primeira bebida usando o formulário ao lado</small>
+                        </td>
+                    </tr>
+                    <tr th:each="bebida : ${bebidas}">
+                        <td th:text="${bebida.id}" style="font-weight: 600; color: #667eea;"></td>
+                        <td>
+                            <div class="drink-name">
+                                <span th:text="${bebida.nome}"></span>
+                                <span class="drink-category">Oriental</span>
+                            </div>
+                        </td>
+                        <td class="price">R$ <span th:text="${#numbers.formatDecimal(bebida.preco, 1, 2)}"></span></td>
+                        <td>
+                            <a th:href="@{/bebidas/delete/{id}(id=${bebida.id})}"
+                               class="btn-delete"
+                               onclick="return confirm('Tem certeza que deseja remover esta bebida do cardápio?')">
+                                🗑️ Remover
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterTable() {
+        const input = document.querySelector('.search-box');
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById('bebidasTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+
+            for (let j = 0; j < cells.length - 1; j++) {
+                if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            rows[i].style.display = found ? '' : 'none';
+        }
+    }
+
+    function fillSuggestion(nome, preco) {
+        document.getElementById('nome').value = nome;
+        document.getElementById('preco').value = preco.toFixed(2);
+
+        // Efeito visual de preenchimento
+        const nomeInput = document.getElementById('nome');
+        const precoInput = document.getElementById('preco');
+
+        nomeInput.style.background = 'rgba(102, 126, 234, 0.1)';
+        precoInput.style.background = 'rgba(102, 126, 234, 0.1)';
+
+        setTimeout(() => {
+            nomeInput.style.background = 'rgba(255,255,255,0.8)';
+            precoInput.style.background = 'rgba(255,255,255,0.8)';
+        }, 1000);
+    }
+
+    // Animação de entrada para as linhas da tabela
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach((row, index) => {
+            row.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s both`;
+        });
+    });
+</script>
+</body>
+</html>

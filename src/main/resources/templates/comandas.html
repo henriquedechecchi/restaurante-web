@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comandas - Sakura Garden</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #2c3e50;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      padding: 1.5rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .header-left h1 {
+      font-family: 'Crimson Text', serif;
+      font-size: 2.5rem;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-left .subtitle {
+      color: #7f8c8d;
+      font-size: 1rem;
+    }
+
+    .back-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 2.5fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-card {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      height: fit-content;
+    }
+
+    .form-card h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #34495e;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: rgba(255,255,255,0.8);
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 1.2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+    }
+
+    .table-card {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .table-header h2 {
+      font-size: 1.8rem;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .search-box {
+      padding: 0.8rem 1rem;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 1rem;
+      width: 300px;
+      background: rgba(255,255,255,0.8);
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: 15px;
+      border: 1px solid #e9ecef;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    thead {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    th {
+      padding: 1.2rem;
+      text-align: left;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
+    }
+
+    td {
+      padding: 1.2rem;
+      border-bottom: 1px solid #e9ecef;
+      vertical-align: middle;
+    }
+
+    tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(102, 126, 234, 0.05);
+      transform: scale(1.01);
+    }
+
+    .btn-delete {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-delete:hover {
+      background: #c0392b;
+      transform: translateY(-1px);
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+    }
+
+    .cliente-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cliente-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .mesa-number {
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      padding: 0.5rem 1rem;
+      border-radius: 50%;
+      font-weight: 700;
+      text-align: center;
+      min-width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-aberta {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      color: white;
+    }
+
+    .status-fechada {
+      background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #7f8c8d;
+    }
+
+    .empty-state .icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      padding: 1.5rem;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .stat-card .number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card .label {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .alert {
+      background: rgba(52, 152, 219, 0.1);
+      border: 1px solid rgba(52, 152, 219, 0.3);
+      color: #3498db;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .alert-error {
+      background: rgba(231, 76, 60, 0.1);
+      border: 1px solid rgba(231, 76, 60, 0.3);
+      color: #e74c3c;
+    }
+
+    .alert-success {
+      background: rgba(39, 174, 96, 0.1);
+      border: 1px solid rgba(39, 174, 96, 0.3);
+      color: #27ae60;
+    }
+
+    /* Links rápidos */
+    .quick-links {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .quick-links h4 {
+      color: #667eea;
+      margin-bottom: 1rem;
+    }
+
+    .quick-links-grid {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .quick-link {
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .quick-link:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    /* Responsivo */
+    @media (max-width: 1200px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .search-box {
+        width: 100%;
+        margin-top: 1rem;
+      }
+
+      .table-header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      th, td {
+        padding: 0.8rem 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+
+    /* Animações */
+    .form-card, .table-card, .stat-card {
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-left">
+      <h1>📋 Comandas</h1>
+      <div class="subtitle">Controle de pedidos e mesas ativas</div>
+    </div>
+    <a th:href="@{/}" class="back-btn">
+      ← Voltar ao Menu
+    </a>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="number" th:text="${#lists.size(comandas)}">0</div>
+      <div class="label">Comandas Ativas</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">🍱</div>
+      <div class="label">Pedidos em Andamento</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">⚡</div>
+      <div class="label">Atendimento Rápido</div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="form-card">
+      <h2>✨ Nova Comanda</h2>
+
+      <!-- Mensagens de erro/sucesso -->
+      <div th:if="${erro}" class="alert alert-error">
+        ❌ <span th:text="${erro}"></span>
+      </div>
+
+      <div th:if="${sucesso}" class="alert alert-success">
+        ✅ <span th:text="${sucesso}"></span>
+      </div>
+
+      <div class="alert">
+        📝 Verifique a disponibilidade da mesa antes de criar a comanda
+      </div>
+
+      <form th:action="@{/comandas}" method="post">
+        <div class="form-group">
+          <label for="mesaId">ID da Mesa</label>
+          <input type="number" id="mesaId" name="mesaId" required
+                 placeholder="Ex: 1" min="1">
+          <small style="color: #7f8c8d; font-size: 0.85rem;">
+            🪑 Consulte a lista de mesas disponíveis
+          </small>
+        </div>
+        <div class="form-group">
+          <label for="clienteId">ID do Cliente</label>
+          <input type="number" id="clienteId" name="clienteId" required
+                 placeholder="Ex: 1" min="1">
+          <small style="color: #7f8c8d; font-size: 0.85rem;">
+            👤 Encontre o cliente na lista de cadastros
+          </small>
+        </div>
+        <div class="form-group">
+          <label for="fechada">Status da Comanda</label>
+          <select id="fechada" name="fechada">
+            <option value="false">Aberta</option>
+            <option value="true">Fechada</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary">
+          Criar Comanda
+        </button>
+      </form>
+
+      <div class="quick-links">
+        <h4>🔗 Links Rápidos</h4>
+        <div class="quick-links-grid">
+          <a href="/clientes" class="quick-link">Ver Clientes</a>
+          <a href="/mesas" class="quick-link">Ver Mesas</a>
+          <a href="/refeicoes" class="quick-link">Cardápio</a>
+          <a href="/bebidas" class="quick-link">Bebidas</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <h2>🍽️ Comandas do Restaurante</h2>
+        <input type="text" class="search-box" placeholder="Buscar comanda..."
+               onkeyup="filterTable()">
+      </div>
+
+      <div class="table-container">
+        <table id="comandasTable">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Mesa</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:if="${#lists.isEmpty(comandas)}">
+            <td colspan="5" class="empty-state">
+              <div class="icon">📋</div>
+              <div>Nenhuma comanda ativa</div>
+              <small>Crie sua primeira comanda usando o formulário ao lado</small>
+            </td>
+          </tr>
+          <tr th:each="comanda : ${comandas}">
+            <td th:text="${comanda.id}" style="font-weight: 600; color: #667eea;"></td>
+            <td>
+              <div class="cliente-info">
+                <div class="cliente-avatar" th:text="${#strings.substring(comanda.cliente.nome,0,1)}">C</div>
+                <span th:text="${comanda.cliente.nome}" style="font-weight: 500;"></span>
+              </div>
+            </td>
+            <td>
+              <div class="mesa-number" th:text="${comanda.mesa.numero}"></div>
+            </td>
+            <td>
+              <span th:class="${comanda.fechada} ? 'status-badge status-fechada' : 'status-badge status-aberta'"
+                    th:text="${comanda.fechada} ? 'Fechada' : 'Aberta'">
+              </span>
+            </td>
+            <td>
+              <a th:href="@{/comandas/delete/{id}(id=${comanda.id})}"
+                 class="btn-delete"
+                 onclick="return confirm('Tem certeza que deseja excluir esta comanda?')">
+                🗑️ Excluir
+              </a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function filterTable() {
+    const input = document.querySelector('.search-box');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('comandasTable');
+    const rows = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < rows.length; i++) {
+      const cells = rows[i].getElementsByTagName('td');
+      let found = false;
+
+      for (let j = 0; j < cells.length - 1; j++) {
+        if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
+          found = true;
+          break;
+        }
+      }
+
+      rows[i].style.display = found ? '' : 'none';
+    }
+  }
+
+  // Animação de entrada para as linhas da tabela
+  document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach((row, index) => {
+      row.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s both`;
+    });
+  });
+</script>
+</body>
+</html>

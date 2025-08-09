@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sakura Garden - Sistema de Gestão</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Elementos decorativos de fundo */
+    body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 100%;
+      height: 200%;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+      z-index: -1;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(1deg); }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 4rem;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    .header h1 {
+      font-family: 'Crimson Text', serif;
+      font-size: 4rem;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 20px rgba(0,0,0,0.3);
+      letter-spacing: -1px;
+    }
+
+    .header .subtitle {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.9);
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .header .tagline {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.7);
+      font-style: italic;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .menu-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow:
+              0 20px 40px rgba(0,0,0,0.1),
+              0 0 0 1px rgba(255,255,255,0.2);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .menu-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ff6b6b, #feca57, #ff9ff3, #54a0ff);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .menu-card:hover {
+      transform: translateY(-10px);
+      box-shadow:
+              0 30px 60px rgba(0,0,0,0.15),
+              0 0 0 1px rgba(255,255,255,0.3);
+    }
+
+    .menu-card .icon {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-card:hover .icon {
+      transform: rotate(5deg) scale(1.1);
+    }
+
+    .menu-card h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .menu-card p {
+      color: #7f8c8d;
+      line-height: 1.6;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin: 4rem 0;
+      padding: 2rem;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+
+    .stat {
+      text-align: center;
+      color: white;
+    }
+
+    .stat .number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(45deg, #ffd89b, #19547b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat .label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 4rem;
+      padding: 2rem;
+      color: rgba(255,255,255,0.7);
+      animation: fadeIn 1s ease-out 1s both;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .menu-card:nth-child(1) { animation: fadeInUp 0.6s ease-out 0.1s both; }
+    .menu-card:nth-child(2) { animation: fadeInUp 0.6s ease-out 0.2s both; }
+    .menu-card:nth-child(3) { animation: fadeInUp 0.6s ease-out 0.3s both; }
+    .menu-card:nth-child(4) { animation: fadeInUp 0.6s ease-out 0.4s both; }
+    .menu-card:nth-child(5) { animation: fadeInUp 0.6s ease-out 0.5s both; }
+    .menu-card:nth-child(6) { animation: fadeInUp 0.6s ease-out 0.6s both; }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2.5rem;
+      }
+
+      .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .stats-bar {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+    }
+
+    /* Efeito de partículas flutuantes */
+    .particle {
+      position: absolute;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .particle:nth-child(1) {
+      width: 6px;
+      height: 6px;
+      top: 20%;
+      left: 10%;
+      animation: floatParticle 8s infinite linear;
+    }
+
+    .particle:nth-child(2) {
+      width: 4px;
+      height: 4px;
+      top: 60%;
+      right: 20%;
+      animation: floatParticle 12s infinite linear reverse;
+    }
+
+    .particle:nth-child(3) {
+      width: 8px;
+      height: 8px;
+      top: 80%;
+      left: 80%;
+      animation: floatParticle 10s infinite linear;
+    }
+
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Partículas flutuantes -->
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+
+<div class="container">
+  <header class="header">
+    <h1>🌸 Sakura Garden</h1>
+    <div class="subtitle">Sistema de Gestão</div>
+    <div class="tagline">Sabores autênticos da Ásia em cada prato</div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="number">150+</div>
+      <div class="label">Pratos Servidos</div>
+    </div>
+    <div class="stat">
+      <div class="number">50+</div>
+      <div class="label">Mesas Disponíveis</div>
+    </div>
+    <div class="stat">
+      <div class="number">24/7</div>
+      <div class="label">Atendimento</div>
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    <a href="/bebidas" class="menu-card">
+      <div class="icon">🍵</div>
+      <h3>Bebidas</h3>
+      <p>Gerencie chás tradicionais, sakês premium, sucos naturais e toda nossa seleção de bebidas orientais.</p>
+    </a>
+
+    <a href="/clientes" class="menu-card">
+      <div class="icon">👥</div>
+      <h3>Clientes</h3>
+      <p>Cadastre e gerencie informações dos clientes, histórico de pedidos e preferências gastronômicas.</p>
+    </a>
+
+    <a href="/comandas" class="menu-card">
+      <div class="icon">📋</div>
+      <h3>Comandas</h3>
+      <p>Controle pedidos ativos, status das mesas e acompanhe o andamento dos pratos em tempo real.</p>
+    </a>
+
+    <a href="/mesas" class="menu-card">
+      <div class="icon">🪑</div>
+      <h3>Mesas</h3>
+      <p>Organize o layout do restaurante, capacidade das mesas e disponibilidade para reservas.</p>
+    </a>
+
+    <a href="/refeicoes" class="menu-card">
+      <div class="icon">🍜</div>
+      <h3>Refeições</h3>
+      <p>Cardápio completo com pratos japoneses, chineses, tailandeses e outras especialidades asiáticas.</p>
+    </a>
+
+    <a href="/reservas" class="menu-card">
+      <div class="icon">📅</div>
+      <h3>Reservas</h3>
+      <p>Sistema de reservas online, controle de horários e organização de eventos especiais.</p>
+    </a>
+  </div>
+
+  <footer class="footer">
+    <p>© 2025 Sakura Garden • Desenvolvido com 💜 para uma experiência gastronômica única</p>
+    <p style="margin-top: 0.5rem; font-size: 0.85rem;">🏮 Tradição Oriental • Tecnologia Moderna</p>
+    <!--💜 Feito por Henrique De Checchi 💜  -->
+  </footer>
+</div>
+
+<script>
+  // Adiciona efeito de hover suave nos cards
+  document.querySelectorAll('.menu-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-10px) scale(1.02)';
+    });
+
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0) scale(1)';
+    });
+  });
+
+  // Animação de contadores
+  function animateCounter(element, target) {
+    let current = 0;
+    const increment = target / 60;
+    const timer = setInterval(() => {
+      current += increment;
+      element.textContent = Math.floor(current) + '+';
+      if (current >= target) {
+        element.textContent = target + '+';
+        clearInterval(timer);
+      }
+    }, 50);
+  }
+
+  // Observer para ativar animações quando visível
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const numbers = entry.target.querySelectorAll('.number');
+        numbers.forEach(num => {
+          const target = parseInt(num.textContent);
+          if (!isNaN(target)) {
+            animateCounter(num, target);
+          }
+        });
+        observer.unobserve(entry.target);
+      }
+    });
+  });
+
+  observer.observe(document.querySelector('.stats-bar'));
+
+  // Efeito de partículas interativas
+  document.addEventListener('mousemove', (e) => {
+    const particles = document.querySelectorAll('.particle');
+    const x = e.clientX;
+    const y = e.clientY;
+
+    particles.forEach((particle, index) => {
+      const speed = (index + 1) * 0.01;
+      const deltaX = (x - window.innerWidth / 2) * speed;
+      const deltaY = (y - window.innerHeight / 2) * speed;
+
+      particle.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    });
+  });
+</script>
+</body>
+</html>

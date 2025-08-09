@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas - Sakura Garden</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header-left h1 {
+            font-family: 'Crimson Text', serif;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-left .subtitle {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2.5fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .form-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .table-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .table-header h2 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-box {
+            padding: 0.8rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            width: 300px;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        th {
+            padding: 1.2rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 1.2rem;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: scale(1.01);
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .cliente-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cliente-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .mesa-number {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            border-radius: 50%;
+            font-weight: 700;
+            text-align: center;
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .datetime-badge {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .alert {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            color: #3498db;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-times {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .time-chip {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .time-chip:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* Responsivo */
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .search-box {
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            th, td {
+                padding: 0.8rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        /* Animações */
+        .form-card, .table-card, .stat-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header-left">
+            <h1>📅 Reservas</h1>
+            <div class="subtitle">Sistema de agendamento e controle de reservas</div>
+        </div>
+        <a th:href="@{/}" class="back-btn">
+            ← Voltar ao Menu
+        </a>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="number" th:text="${#lists.size(reservas)}">0</div>
+            <div class="label">Reservas Ativas</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">🎎</div>
+            <div class="label">Experiência VIP</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">⏰</div>
+            <div class="label">Pontualidade</div>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div class="form-card">
+            <h2>✨ Nova Reserva</h2>
+
+            <div class="alert">
+                📞 Confirme sempre os dados com o cliente antes de finalizar
+            </div>
+
+            <form th:action="@{/reservas}" method="post">
+                <div class="form-group">
+                    <label for="clienteId">ID do Cliente</label>
+                    <input type="number" id="clienteId" name="clienteId" required
+                           placeholder="Ex: 1" min="1">
+                    <small style="color: #7f8c8d; font-size: 0.85rem;">
+                        👤 Consulte a lista de clientes para encontrar o ID
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="mesaId">ID da Mesa</label>
+                    <input type="number" id="mesaId" name="mesaId" required
+                           placeholder="Ex: 1" min="1">
+                    <small style="color: #7f8c8d; font-size: 0.85rem;">
+                        🪑 Verifique a disponibilidade da mesa
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="dataHora">Data e Horário</label>
+                    <input type="datetime-local" id="dataHora" name="dataHora" required>
+                    <div class="quick-times">
+                        <span class="time-chip" onclick="setQuickTime('hoje-19')">Hoje 19:00</span>
+                        <span class="time-chip" onclick="setQuickTime('hoje-20')">Hoje 20:00</span>
+                        <span class="time-chip" onclick="setQuickTime('amanha-19')">Amanhã 19:00</span>
+                        <span class="time-chip" onclick="setQuickTime('amanha-20')">Amanhã 20:00</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">
+                    Confirmar Reserva
+                </button>
+            </form>
+
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef;">
+                <h4 style="color: #667eea; margin-bottom: 1rem;">🔗 Links Rápidos</h4>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <a href="/clientes" style="background: rgba(102, 126, 234, 0.1); color: #667eea; padding: 0.5rem 1rem; border-radius: 20px; text-decoration: none; font-size: 0.85rem;">Ver Clientes</a>
+                    <a href="/mesas" style="background: rgba(102, 126, 234, 0.1); color: #667eea; padding: 0.5rem 1rem; border-radius: 20px; text-decoration: none; font-size: 0.85rem;">Ver Mesas</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="table-header">
+                <h2>📊 Agenda de Reservas</h2>
+                <input type="text" class="search-box" placeholder="Buscar reserva..."
+                       onkeyup="filterTable()">
+            </div>
+
+            <div class="table-container">
+                <table id="reservasTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Mesa</th>
+                        <th>Data/Hora</th>
+                        <th>Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(reservas)}">
+                        <td colspan="5" class="empty-state">
+                            <div class="icon">📅</div>
+                            <div>Nenhuma reserva agendada</div>
+                            <small>Crie sua primeira reserva usando o formulário ao lado</small>
+                        </td>
+                    </tr>
+                    <tr th:each="reserva : ${reservas}">
+                        <td th:text="${reserva.id}" style="font-weight: 600; color: #667eea;"></td>
+                        <td>
+                            <div class="cliente-info">
+                                <div class="cliente-avatar" th:text="${#strings.substring(reserva.cliente.nome,0,1)}">C</div>
+                                <span th:text="${reserva.cliente.nome}" style="font-weight: 500;"></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="mesa-number" th:text="${reserva.mesa.numero}"></div>
+                        </td>
+                        <td>
+                            <div class="datetime-badge" th:text="${#dates.format(reserva.dataHora, 'dd/MM/yyyy HH:mm')}"></div>
+                        </td>
+                        <td>
+                            <a th:href="@{/reservas/delete/{id}(id=${reserva.id})}"
+                               class="btn-delete"
+                               onclick="return confirm('Tem certeza que deseja cancelar esta reserva?')">
+                                ❌ Cancelar
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterTable() {
+        const input = document.querySelector('.search-box');
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById('reservasTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+
+            for (let j = 0; j < cells.length - 1; j++) {
+                if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            rows[i].style.display = found ? '' : 'none';
+        }
+    }
+
+    function setQuickTime(option) {
+        const input = document.getElementById('dataHora');
+        const now = new Date();
+        let targetDate = new Date();
+
+        switch(option) {
+            case 'hoje-19':
+                targetDate.setHours(19, 0, 0, 0);
+                break;
+            case 'hoje-20':
+                targetDate.setHours(20, 0, 0, 0);
+                break;
+            case 'amanha-19':
+                targetDate.setDate(now.getDate() + 1);
+                targetDate.setHours(19, 0, 0, 0);
+                break;
+            case 'amanha-20':
+                targetDate.setDate(now.getDate() + 1);
+                targetDate.setHours(20, 0, 0, 0);
+                break;
+        }
+
+        // Formato para datetime-local: YYYY-MM-DDTHH:mm
+        const formatted = targetDate.toISOString().slice(0, 16);
+        input.value = formatted;
+
+        // Efeito visual
+        input.style.background = 'rgba(102, 126, 234, 0.1)';
+        setTimeout(() => {
+            input.style.background = 'rgba(255,255,255,0.8)';
+        }, 1000);
+    }
+
+    // Define data mínima como hoje
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        const formatted = now.toISOString().slice(0, 16);
+        document.getElementById('dataHora').min = formatted;
+
+        // Animação de entrada para as linhas da tabela
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach((row, index) => {
+            row.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s both`;
+        });
+    });
+</script>
+</body>
+</html>
